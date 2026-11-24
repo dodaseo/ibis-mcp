@@ -22,8 +22,11 @@ $ibis = Join-Path $env:LOCALAPPDATA 'Programs\Ibis\Ibis.exe'; Test-Path $ibis
 ## 2. 서버가 뜨는지 확인한다
 
 ```powershell
-'{"jsonrpc":"2.0","id":1,"method":"tools/list"}' | & $ibis --mcp
+cmd /c "echo {""jsonrpc"":""2.0"",""id"":1,""method"":""tools/list""} | ""$ibis"" --mcp"
 ```
+
+PowerShell 의 `'…' | & $ibis --mcp` 꼴은 쓰지 않습니다(창 전용 실행 파일이라 출력이 이어지지 않습니다). bash 에서는
+`echo '{"jsonrpc":"2.0","id":1,"method":"tools/list"}' | "$IBIS_EXE" --mcp` 로 됩니다.
 
 `"tools"` 가 든 JSON 한 줄이 나오면 됩니다. 아무것도 나오지 않으면 Ibis 가 오래된 판입니다 —
 사용자에게 Ibis 를 업데이트해 달라고 하고 멈춥니다(도움말 › 업데이트 확인).

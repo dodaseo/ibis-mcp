@@ -171,9 +171,14 @@ def main() -> int:
                 except Exception:  # noqa: BLE001 — 요청 하나의 실패가 서버를 죽이지 않는다
                     reply = {"jsonrpc": "2.0", "id": msg.get("id"), "error": {"code": -32603, "message": "내부 오류"}}
         if reply is not None:
-            with lock:
-                wr.write(json.dumps(reply, ensure_ascii=False).encode("utf-8") + b"\n")
-                wr.flush()
+            try:
+                with lock:
+                    wr.write(json.dumps(reply, ensure_ascii=False).encode("utf-8") + b"\n")
+                    wr.flush()
+            except OSError:
+                # 표준출력이 이어져 있지 않다 — 창 전용 실행 파일을 PowerShell 의 `'…' | & Ibis.exe --mcp` 로 부르면 그렇다
+                # (실측 2026-11-24: bash·cmd 파이프·Start-Process 재지정·에이전트의 파이프는 된다). 조용히 끝낸다.
+                return 2
     return 0
 
 
