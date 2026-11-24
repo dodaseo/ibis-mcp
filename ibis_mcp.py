@@ -25,7 +25,8 @@ INSTRUCTIONS = (
     "Ibis(서지 관리 앱)의 서재를 다룬다. 흐름: ibis_sources 로 소스·검색 요령 확인 → ibis_search 를 짧은 검색어로 여러 번 → "
     "쓸 문헌의 key 를 ibis_add 로 담으면서 collection 이름을 주어 한 컬렉션에 모은다 → ibis_collection_refs 로 모은 것과 "
     "PDF 없는 문헌을 확인해 사용자에게 알린다. PDF 는 사용자가 Ibis 에서 직접 받는다. 서지를 지어내지 말 것 — "
-    "검색 결과에 없는 문헌은 DOI 로만 담는다. 지우거나 고치는 도구는 없다."
+    "검색 결과에 없는 문헌은 DOI 로만 담는다. 지우거나 고치는 도구는 없다. 사용자가 받아 둔 PDF 는 ibis_pdf_text(본문) · "
+    "ibis_annotations(형광펜·메모) · ibis_pdf_path(파일 자리)로 읽는다 — 사용자가 그 스위치를 켠 경우에만."
 )
 
 _S = {"type": "string"}
@@ -63,6 +64,18 @@ TOOLS = (
     _tool("ibis_collection_refs", "collection_refs",
           "컬렉션에 담긴 문헌 목록 — 문헌마다 has_pdf, 그리고 PDF 없는 문헌 수(missing_pdf). 사용자에게 받을 PDF 를 알릴 때 쓴다.",
           {"collection": _S}, ("collection",)),
+    _tool("ibis_pdf_text", "pdf_text",
+          "서재 문헌에 붙은 PDF 의 본문을 쪽별로 읽는다(has_pdf 가 참인 문헌만 — 사용자가 Ibis 에서 받아 둔 파일). "
+          "page_from·page_to 로 쪽 범위를 정한다(생략하면 전부 — 긴 문서는 pages_total 을 먼저 보고 나눠 읽는다). "
+          "첨부가 여럿이면 file 에 파일 이름. 사용자가 'PDF 본문·주석 읽기'를 켜 둬야 한다(ibis_status 의 pdf_reading).",
+          {"key": _S, "page_from": _I, "page_to": _I, "file": _S}, ("key",)),
+    _tool("ibis_pdf_path", "pdf_path",
+          "서재 문헌에 붙은 PDF 파일의 자리(전체 경로·크기). 표·그림까지 봐야 하거나 작업 폴더에 사본을 둘 때 — 읽기·복사는 "
+          "에이전트가 제 도구로 한다(원본을 옮기거나 고치지 말 것).",
+          {"key": _S}, ("key",)),
+    _tool("ibis_annotations", "annotations",
+          "사용자가 그 문헌의 PDF 에 남긴 형광펜·밑줄·메모(쪽·종류·칠한 문장·메모). 사용자가 무엇을 중요하게 봤는지 알 때 쓴다.",
+          {"key": _S}, ("key",)),
 )
 _BY_NAME = {t["name"]: t for t in TOOLS}
 

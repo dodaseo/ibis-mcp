@@ -69,3 +69,6 @@ cmd /c "echo {""jsonrpc"":""2.0"",""id"":1,""method"":""tools/call"",""params"":
 - 검색은 `ibis_sources` 를 먼저 읽고, 짧은 검색어로 여러 번 합니다.
 - 서지를 지어내지 않습니다. 검색 결과에 없는 문헌은 DOI 로만 담습니다.
 - PDF 는 받지 않습니다. 모은 컬렉션과 PDF 없는 문헌 수를 알려 주면 사용자가 Ibis 에서 받습니다.
+- 받아 둔 PDF 를 읽으려면(`ibis_pdf_text` · `ibis_annotations` · `ibis_pdf_path`) 사용자가 같은 설정 자리의
+  **'받아 둔 PDF 의 본문·주석도 읽습니다'**를 켜야 합니다. `ibis_status` 의 `pdf_reading` 으로 압니다. 대신 켜지 않습니다.
+- 긴 문서는 `pages_total` 을 먼저 보고 쪽 범위를 나눠 읽습니다.
