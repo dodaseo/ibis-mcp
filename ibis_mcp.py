@@ -76,6 +76,17 @@ TOOLS = (
     _tool("ibis_annotations", "annotations",
           "사용자가 그 문헌의 PDF 에 남긴 형광펜·밑줄·메모(쪽·종류·칠한 문장·메모). 사용자가 무엇을 중요하게 봤는지 알 때 쓴다.",
           {"key": _S}, ("key",)),
+    _tool("ibis_annotate", "annotate",
+          "서재 문헌의 PDF 에 형광펜·밑줄·메모를 남긴다. items 의 각 항목: type(highlight|underline|note) · page(ibis_pdf_text "
+          "의 page) · text(칠할 문장 — 그 쪽 본문에서 **글자 그대로** 옮긴다, 8자 이상. note 는 생략 가능 = 쪽 메모) · "
+          "note(메모 글 — note 는 필수, 형광펜·밑줄에는 선택). model 에는 지금 답하는 모델의 이름을 적는다(주석 하단에 "
+          "표기된다 — 예: 'Claude Opus 5.5'). 자리는 사용자가 그 PDF 를 열 때 정해진다. 사용자가 'PDF 에 주석 남기기'를 "
+          "켜 둬야 한다(ibis_status 의 annotating). 사용자가 요청한 만큼만 남긴다 — 문서를 주석으로 덮지 말 것.",
+          {"key": _S, "model": _S, "file": _S,
+           "items": {"type": "array", "items": {"type": "object", "properties": {
+               "type": {"type": "string", "enum": ["highlight", "underline", "note"]}, "page": _I, "text": _S,
+               "note": _S}, "required": ["type", "page"]}}},
+          ("key", "model", "items")),
 )
 _BY_NAME = {t["name"]: t for t in TOOLS}
 

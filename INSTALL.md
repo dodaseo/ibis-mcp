@@ -72,3 +72,6 @@ cmd /c "echo {""jsonrpc"":""2.0"",""id"":1,""method"":""tools/call"",""params"":
 - 받아 둔 PDF 를 읽으려면(`ibis_pdf_text` · `ibis_annotations` · `ibis_pdf_path`) 사용자가 같은 설정 자리의
   **'받아 둔 PDF 의 본문·주석도 읽습니다'**를 켜야 합니다. `ibis_status` 의 `pdf_reading` 으로 압니다. 대신 켜지 않습니다.
 - 긴 문서는 `pages_total` 을 먼저 보고 쪽 범위를 나눠 읽습니다.
+- 주석을 남기려면(`ibis_annotate`) 사용자가 **'PDF 에 형광펜·밑줄·메모를 남깁니다'**도 켜야 합니다(`ibis_status` 의 `annotating`).
+  칠할 문장은 `ibis_pdf_text` 로 읽은 그 쪽 본문에서 글자 그대로 옮기고, `model` 에 지금 답하는 모델의 이름을 적습니다.
+  사용자가 요청한 만큼만 남깁니다.
