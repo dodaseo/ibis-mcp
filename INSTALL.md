@@ -5,10 +5,9 @@ Windows 기준입니다.
 
 ## 1. Ibis 실행 파일을 찾는다
 
-차례로 확인해 **처음 존재하는 경로**를 `IBIS_EXE` 로 씁니다.
+사용자가 설치 폴더를 알려 줬으면 그 폴더의 `Ibis.exe` 를 `IBIS_EXE` 로 씁니다. 아니면 기본 위치를 씁니다.
 
-1. `%LOCALAPPDATA%\Programs\Ibis\Ibis.exe` (설치본의 기본 위치)
-2. 사용자가 알려 준 설치 폴더의 `Ibis.exe` (압축을 풀어 쓰는 경우)
+- 기본 위치: `%LOCALAPPDATA%\Programs\Ibis\Ibis.exe`
 
 PowerShell:
 
@@ -56,7 +55,13 @@ PowerShell 의 `'…' | & $ibis --mcp` 꼴은 쓰지 않습니다(창 전용 실
 
 ## 5. 확인한다
 
-에이전트를 다시 시작(또는 MCP 다시 연결)한 뒤 `ibis_status` 를 부릅니다. `"ok": true` 와 서재의 문헌 수가 오면 끝입니다.
+방금 등록한 도구는 **지금 대화에는 아직 보이지 않습니다**(에이전트를 다시 시작해야 올라옵니다). 그래서 실행 파일에 직접 물어 확인합니다.
+
+```powershell
+cmd /c "echo {""jsonrpc"":""2.0"",""id"":1,""method"":""tools/call"",""params"":{""name"":""ibis_status"",""arguments"":{}}} | ""$ibis"" --mcp"
+```
+
+`\"ok\": true` 와 서재의 문헌 수가 오면 끝입니다. 사용자에게 에이전트를 다시 시작하면 `ibis_*` 도구를 쓸 수 있다고 알립니다.
 `"Ibis 에 연결할 수 없습니다"` 가 오면 Ibis 가 꺼져 있거나 4번을 하지 않은 것입니다.
 
 ## 쓰는 요령
