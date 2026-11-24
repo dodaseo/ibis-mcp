@@ -25,7 +25,9 @@ INSTRUCTIONS = (
     "Ibis(서지 관리 앱)의 서재를 다룬다. 흐름: ibis_sources 로 소스·검색 요령 확인 → ibis_search 를 짧은 검색어로 여러 번 → "
     "쓸 문헌의 key 를 ibis_add 로 담으면서 collection 이름을 주어 한 컬렉션에 모은다 → ibis_collection_refs 로 모은 것과 "
     "PDF 없는 문헌을 확인해 사용자에게 알린다. PDF 는 사용자가 Ibis 에서 직접 받는다. 서지를 지어내지 말 것 — "
-    "검색 결과에 없는 문헌은 DOI 로만 담는다. 지우거나 고치는 도구는 없다. 사용자가 받아 둔 PDF 는 ibis_pdf_text(본문) · "
+    "검색 결과에 없는 문헌은 DOI 로만 담는다. 서지를 지우거나 고치는 도구는 없다 — 컬렉션은 재편할 수 있다(하위 컬렉션 만들기 · "
+    "ibis_collection_remove 로 컬렉션에서 빼기 · ibis_collection_move 로 옮기기·이름 바꾸기). "
+    "사용자가 받아 둔 PDF 는 ibis_pdf_text(본문) · "
     "ibis_annotations(형광펜·메모) · ibis_pdf_path(파일 자리)로 읽는다 — 사용자가 그 스위치를 켠 경우에만."
 )
 
@@ -64,6 +66,14 @@ TOOLS = (
     _tool("ibis_collection_refs", "collection_refs",
           "컬렉션에 담긴 문헌 목록 — 문헌마다 has_pdf, 그리고 PDF 없는 문헌 수(missing_pdf). 사용자에게 받을 PDF 를 알릴 때 쓴다.",
           {"collection": _S}, ("collection",)),
+    _tool("ibis_collection_remove", "collection_remove",
+          "컬렉션에서 문헌을 뺀다. 문헌은 서재에 그대로 남고 다른 컬렉션의 소속도 그대로다(서재에서 지우는 것이 아니다). "
+          "하위 컬렉션으로 나눠 담은 뒤 상위에 남은 것을 뺄 때 쓴다 — 빼기 전에 그 문헌이 옮겨 갈 곳에 들어갔는지 확인한다.",
+          {"collection": _S, "keys": _L}, ("collection", "keys")),
+    _tool("ibis_collection_move", "collection_move",
+          "컬렉션을 다른 컬렉션 아래로 옮기거나 이름을 바꾼다. parent 는 상위 컬렉션의 이름이나 id(빈 글자면 맨 위로), "
+          "name 은 새 이름. 담긴 문헌은 그대로다. 컬렉션을 지우는 도구는 없다.",
+          {"collection": _S, "parent": _S, "name": _S}, ("collection",)),
     _tool("ibis_pdf_text", "pdf_text",
           "서재 문헌에 붙은 PDF 의 본문을 쪽별로 읽는다(has_pdf 가 참인 문헌만 — 사용자가 Ibis 에서 받아 둔 파일). "
           "page_from·page_to 로 쪽 범위를 정한다(생략하면 전부 — 긴 문서는 pages_total 을 먼저 보고 나눠 읽는다). "
@@ -103,7 +113,9 @@ def call_bridge(op: str, args: dict) -> dict:
         return {"ok": False, "error": "Ibis 에 연결할 수 없습니다 — Ibis 가 켜져 있는지, 설정 › AI 의 'AI 에이전트 연결'을 "
                                       "켰는지 확인하세요."}
     body = json.dumps({"protocol": PROTOCOL, "op": op,
-                       "args": {k: v for k, v in args.items() if v not in (None, "", [])}},
+                       # 빈 값은 싣지 않는다 — 단 collection_move 의 parent=""(맨 위로)는 뜻이 있어 남긴다
+                       "args": {k: v for k, v in args.items()
+                                if v not in (None, "", []) or (op == "collection_move" and k == "parent" and v == "")}},
                       ensure_ascii=False).encode("utf-8")
     req = urllib.request.Request(f"http://127.0.0.1:{port}/v1/agent", data=body, method="POST",
                                  headers={"Authorization": "Bearer " + token, "Content-Type": "application/json",

@@ -39,6 +39,8 @@ claude mcp add --scope user ibis -- uvx --from git+https://github.com/dodaseo/ib
 | `ibis_collection_create` | 컬렉션 만들기 |
 | `ibis_add` | 검색 결과의 key 나 DOI 로 서재에 담기. `collection` 을 주면 그 컬렉션에도(없으면 만듦) |
 | `ibis_collection_refs` | 컬렉션의 문헌과 PDF 없는 문헌 수 |
+| `ibis_collection_remove` | 컬렉션에서 문헌 빼기 — 문헌은 서재에 남습니다 |
+| `ibis_collection_move` | 컬렉션을 다른 컬렉션 아래로 옮기기 · 이름 바꾸기 |
 | `ibis_pdf_text` | 받아 둔 PDF 의 본문을 쪽별로(쪽 범위 지정) |
 | `ibis_pdf_path` | 받아 둔 PDF 파일의 자리 — 읽기·작업 폴더로 복사는 에이전트가 직접 |
 | `ibis_annotations` | PDF 에 남긴 형광펜·밑줄·메모 |
@@ -50,7 +52,9 @@ PDF 를 읽는 셋은 설정의 **'받아 둔 PDF 의 본문·주석도 읽습�
 에이전트가 남긴 주석은 전용 색으로 칠해지고 주석 하단에 모델 이름이 붙습니다. 문장의 자리는 그 PDF 를 열 때 정해지며,
 본문에서 문장을 찾지 못하면 그 쪽의 메모로 남습니다. 지우는 것은 여느 주석처럼 뷰어에서 합니다.
 
-지우기 · 고치기 · 설정 · AI 실행 · 원문 자동 확보는 없습니다.
+서지 · 컬렉션 지우기 · 서지 고치기 · 설정 · AI 실행 · 원문 자동 확보는 없습니다.
+
+`ibis_collection_remove` · `ibis_collection_move` 는 Ibis 2026.11.8.2 부터 있습니다.
 
 ## 알아 둘 것
 
