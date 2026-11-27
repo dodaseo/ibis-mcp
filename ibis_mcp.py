@@ -25,7 +25,10 @@ INSTRUCTIONS = (
     "Ibis(서지 관리 앱)의 서재를 다룬다. 흐름: ibis_sources 로 소스·검색 요령 확인 → ibis_search 를 짧은 검색어로 여러 번 → "
     "쓸 문헌의 key 를 ibis_add 로 담으면서 collection 이름을 주어 한 컬렉션에 모은다 → ibis_collection_refs 로 모은 것과 "
     "PDF 없는 문헌을 확인해 사용자에게 알린다. PDF 는 사용자가 Ibis 에서 직접 받는다. 서지를 지어내지 말 것 — "
-    "검색 결과에 없는 문헌은 DOI 로만 담는다. 서지를 지우거나 고치는 도구는 없다 — 컬렉션은 재편할 수 있다(하위 컬렉션 만들기 · "
+    "학술논문·학위논문·법령·통계는 ibis_search/dois, 단행본은 isbns(또는 nl_seoji)로만 담는다. "
+    "내장 DB 에 없는 신문기사(newspaper-article)·웹자료/보도자료(webpage)와 우선순위 검색 DB 에 없는 보고서(report)만 "
+    "ibis_add 의 records 로 직접 담을 수 있다(보고서는 ibis_search 로 먼저 찾은 뒤 없을 때만 사용하고, 서버가 DB 를 한 번 더 대조한다). "
+    "서지를 지우거나 고치는 도구는 없다 — 컬렉션은 재편할 수 있다(하위 컬렉션 만들기 · "
     "ibis_collection_remove 로 컬렉션에서 빼기 · ibis_collection_move 로 옮기기·이름 바꾸기). "
     "사용자가 받아 둔 PDF 는 ibis_pdf_text(본문) · "
     "ibis_annotations(형광펜·메모) · ibis_pdf_path(파일 자리)로 읽는다 — 사용자가 그 스위치를 켠 경우에만."
@@ -34,6 +37,28 @@ INSTRUCTIONS = (
 _S = {"type": "string"}
 _I = {"type": "integer"}
 _L = {"type": "array", "items": {"type": "string"}}
+_RECORD_SCHEMA = {
+    "type": "object",
+    "properties": {
+        "type": {"type": "string", "enum": ["newspaper-article", "webpage", "report"]},
+        "title": _S,
+        "authors": _L,
+        "year": _I,
+        "date": _S,
+        "access_date": _S,
+        "container": _S,
+        "publisher": _S,
+        "place": _S,
+        "issue": _S,
+        "pages": _S,
+        "genre": _S,
+        "url": _S,
+        "language": _S,
+        "abstract": _S,
+    },
+    "required": ["type", "title"],
+    "additionalProperties": False,
+}
 
 
 def _tool(name, op, desc, props=None, required=()):
@@ -61,8 +86,15 @@ TOOLS = (
     _tool("ibis_add", "add",
           "문헌을 서재에 담는다. collection(이름 또는 id)을 주면 그 컬렉션에도 넣는다 — 없으면 만든다. keys: ibis_search "
           "결과의 key 목록(이미 서재에 있는 문헌도 된다 — 컬렉션에만 넣는다). dois: 검색 결과에 없는 문헌은 DOI 로(Ibis 가 "
-          "등록기관에서 서지를 가져온다). 반환: added · already_in_library · in_collection · failed(사유).",
-          {"keys": _L, "dois": _L, "collection": _S}),
+          "등록기관에서 서지를 가져온다). isbns: 단행본은 ISBN(10·13자리)으로 — 학술 DB 에는 단행본이 거의 없다. Ibis 가 "
+          "국립중앙도서관 · Open Library 에서 그 판본의 서지를 가져온다(Open Library 는 이용자가 올린 자료라 틀릴 수 있다 — "
+          "담은 뒤 ibis_reference 로 확인한다). records: 내장 DB·DOI·ISBN 으로 찾을 수 없는 신문기사(newspaper-article)·"
+          "웹/보도자료(webpage)·우선순위 검색 DB 에 없는 보고서(report)만 직접 입력한다. report 는 서버가 우선순위 DB 를 대조해 "
+          "이미 있으면 거절하고 matches[].key 를 돌려준다(학술지·단행본·학위논문·법령·통계는 records 로 입력 불가). "
+          "반환: added · already_in_library · in_collection · failed(사유).",
+          {"keys": _L, "dois": _L, "isbns": _L,
+           "records": {"type": "array", "items": _RECORD_SCHEMA},
+           "collection": _S}),
     _tool("ibis_collection_refs", "collection_refs",
           "컬렉션에 담긴 문헌 목록 — 문헌마다 has_pdf, 그리고 PDF 없는 문헌 수(missing_pdf). 사용자에게 받을 PDF 를 알릴 때 쓴다.",
           {"collection": _S}, ("collection",)),
