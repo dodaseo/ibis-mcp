@@ -24,7 +24,8 @@ SERVER_VERSION = "1.0.0"
 INSTRUCTIONS = (
     "Ibis(서지 관리 앱)의 서재를 다룬다. 흐름: ibis_sources 로 소스·검색 요령 확인 → ibis_search 를 짧은 검색어로 여러 번 → "
     "쓸 문헌의 key 를 ibis_add 로 담으면서 collection 이름을 주어 한 컬렉션에 모은다 → ibis_collection_refs 로 모은 것과 "
-    "PDF 없는 문헌을 확인해 사용자에게 알린다. PDF 는 사용자가 Ibis 에서 직접 받는다. 서지를 지어내지 말 것 — "
+    "PDF 없는 문헌을 확인해 사용자에게 알린다. PDF 는 사용자가 Ibis 에서 직접 받는다(사용자가 이 PC 에 이미 가진 PDF·EPUB "
+    "파일은 ibis_attach 로 붙일 수 있다 — 원문을 내려받아 붙이지 말 것). 서지를 지어내지 말 것 — "
     "학술논문·학위논문·법령·통계는 ibis_search/dois, 단행본은 isbns(또는 nl_seoji)로만 담는다. "
     "내장 DB 에 없는 신문기사(newspaper-article)·웹자료/보도자료(webpage)와 우선순위 검색 DB 에 없는 보고서(report)만 "
     "ibis_add 의 records 로 직접 담을 수 있다(보고서는 ibis_search 로 먼저 찾은 뒤 없을 때만 사용하고, 서버가 DB 를 한 번 더 대조한다). "
@@ -106,6 +107,12 @@ TOOLS = (
           "컬렉션을 다른 컬렉션 아래로 옮기거나 이름을 바꾼다. parent 는 상위 컬렉션의 이름이나 id(빈 글자면 맨 위로), "
           "name 은 새 이름. 담긴 문헌은 그대로다. 컬렉션을 지우는 도구는 없다.",
           {"collection": _S, "parent": _S, "name": _S}, ("collection",)),
+    _tool("ibis_attach", "attach",
+          "이 PC 에 있는 PDF·EPUB 파일 하나를 서재 문헌에 붙인다(사용자가 가진 공문·보고서·보도자료 원문 등). key 는 서재 문헌, "
+          "path 는 파일의 전체 경로. 사본이 서재에 들어가고 이름이 정리된다 — 원본은 그대로다. 주소(URL)는 받지 않는다: "
+          "사용자가 이미 가진 파일만 붙이고, 논문 원문을 내려받아 붙이지 말 것(원문은 사용자가 Ibis 에서 받는다). "
+          "한글(HWPX)·Word 문서는 PDF 로 바꾼 뒤 붙인다. 붙인 파일은 사용자가 Ibis 에서 뗄 수 있다.",
+          {"key": _S, "path": _S}, ("key", "path")),
     _tool("ibis_pdf_text", "pdf_text",
           "서재 문헌에 붙은 PDF 의 본문을 쪽별로 읽는다(has_pdf 가 참인 문헌만 — 사용자가 Ibis 에서 받아 둔 파일). "
           "page_from·page_to 로 쪽 범위를 정한다(생략하면 전부 — 긴 문서는 pages_total 을 먼저 보고 나눠 읽는다). "

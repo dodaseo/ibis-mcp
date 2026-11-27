@@ -38,6 +38,7 @@ claude mcp add --scope user ibis -- uvx --from git+https://github.com/dodaseo/ib
 | `ibis_collections` | 컬렉션 목록 |
 | `ibis_collection_create` | 컬렉션 만들기 |
 | `ibis_add` | 검색 결과의 key 나 DOI 로 서재에 담기. `collection` 을 주면 그 컬렉션에도(없으면 만듦) |
+| `ibis_attach` | 이 PC 에 있는 PDF·EPUB 파일을 서재 문헌에 붙이기 — 사본이 서재에 들어가고 원본은 남습니다. 주소(URL)는 받지 않습니다 |
 | `ibis_collection_refs` | 컬렉션의 문헌과 PDF 없는 문헌 수 |
 | `ibis_collection_remove` | 컬렉션에서 문헌 빼기 — 문헌은 서재에 남습니다 |
 | `ibis_collection_move` | 컬렉션을 다른 컬렉션 아래로 옮기기 · 이름 바꾸기 |
@@ -54,7 +55,7 @@ PDF 를 읽는 셋은 설정의 **'받아 둔 PDF 의 본문·주석도 읽습�
 
 서지 · 컬렉션 지우기 · 서지 고치기 · 설정 · AI 실행 · 원문 자동 확보는 없습니다.
 
-`ibis_collection_remove` · `ibis_collection_move` 는 Ibis 2026.11.8.2 부터 있습니다.
+`ibis_collection_remove` · `ibis_collection_move` 는 Ibis 2026.11.8.2 부터, `ibis_attach` 는 2026.11.9.4 부터 있습니다.
 
 ## 알아 둘 것
 
